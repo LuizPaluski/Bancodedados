@@ -30,7 +30,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `cidade` (
   `codCidade` int NOT NULL,
   `nome` varchar(50) NOT NULL,
-  `siglaEstado` char(2) NOT NULL
+  `siglaEstado` char(2) NOT NULL REFERENCES estado(siglaEstado)
+  ON DELETE no action ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -60,6 +61,8 @@ CREATE TABLE `cliente` (
   `tipo` char(1) DEFAULT NULL,
   `dataCadastro` date DEFAULT (CURRENT_DATE)
   `cep` char(8) DEFAULT NULL
+  CONSTRAINT fk_cli_cid FOREIGN KEY (codCidade)REFERENCES cidade
+  (codCidade) ON DELETE no action ON UPDATE CASCADE
 ) ;
 
 -- --------------------------------------------------------
@@ -269,6 +272,8 @@ CREATE TABLE `vendedor` (
   `codCidade` int DEFAULT '1',
   `dataContratacao` date DEFAULT (CURRENT_DATE)),
   `codDepartamento` int DEFAULT NULL
+  FOREIGN KEY (codDepartamento) REFERENCES departamento (codDepartamento)
+  ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -295,6 +300,7 @@ ALTER TABLE `classe`
 ALTER TABLE `cliente`
   ADD PRIMARY KEY (`codCliente`),
   ADD KEY `codCidade` (`codCidade`);
+
 
 --
 -- Índices de tabela `clienteFisico`
