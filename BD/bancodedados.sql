@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql:3306
--- Tempo de geração: 05/06/2025 às 13:19
+-- Tempo de geração: 06/06/2025 às 12:01
 -- Versão do servidor: 9.0.1
 -- Versão do PHP: 8.2.8
 
@@ -30,9 +30,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `cidade` (
   `codCidade` int NOT NULL,
   `nome` varchar(50) NOT NULL,
-  `siglaEstado` char(2) NOT NULL REFERENCES estado(siglaEstado)
-  ON DELETE no action ON UPDATE CASCADE
+  `siglaEstado` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `cidade`
+--
+
+INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
+(1, 'Guarapuava', 'PR');
 
 -- --------------------------------------------------------
 
@@ -42,9 +48,9 @@ CREATE TABLE `cidade` (
 
 CREATE TABLE `classe` (
   `codClasse` int NOT NULL,
-  `sigla` varchar(12) DEFAULT NULL,
+  `sigla` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `nome` varchar(40) NOT NULL,
-  `descricao` varchar(80) DEFAULT NULL
+  `descricao` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -58,11 +64,9 @@ CREATE TABLE `cliente` (
   `endereco` varchar(60) DEFAULT NULL,
   `codCidade` int NOT NULL,
   `telefone` varchar(20) DEFAULT NULL,
-  `tipo` char(1) DEFAULT NULL,
-  `dataCadastro` date DEFAULT (CURRENT_DATE)
-  `cep` char(8) DEFAULT NULL
-  CONSTRAINT fk_cli_cid FOREIGN KEY (codCidade)REFERENCES cidade
-  (codCidade) ON DELETE no action ON UPDATE CASCADE
+  `tipo` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `dataCadastro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cep` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ;
 
 -- --------------------------------------------------------
@@ -87,7 +91,7 @@ CREATE TABLE `clienteFisico` (
 
 CREATE TABLE `clienteJuridico` (
   `codCliente` int NOT NULL,
-  `nomeFantasia` varchar(80) DEFAULT NULL,
+  `nomeFantasia` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `razaoSocial` varchar(80) NOT NULL,
   `ie` varchar(20) NOT NULL,
   `cgc` varchar(20) NOT NULL
@@ -102,13 +106,13 @@ CREATE TABLE `clienteJuridico` (
 CREATE TABLE `contasPagar` (
   `codTitulo` int NOT NULL,
   `dataVencimento` date NOT NULL,
-  `parcela` int DEFAULT NULL,
-  `codPedido` int DEFAULT NULL,
-  `valor` decimal(20,2) DEFAULT NULL,
-  `dataPagamento` date DEFAULT NULL,
-  `localPagamento` varchar(80) DEFAULT NULL,
-  `juros` decimal(12,2) DEFAULT NULL,
-  `correcaoMonetaria` decimal(12,2) DEFAULT NULL
+  `parcela` int NOT NULL,
+  `codPedido` int NOT NULL,
+  `valor` decimal(20,0) NOT NULL,
+  `dataPagamento` date NOT NULL,
+  `localPagamento` varchar(80) NOT NULL,
+  `juros` decimal(12,2) NOT NULL,
+  `correcaoMonetaria` decimal(12,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -138,8 +142,8 @@ CREATE TABLE `contasReceber` (
 CREATE TABLE `departamento` (
   `codDepartamento` int NOT NULL,
   `nome` varchar(40) NOT NULL,
-  `descricaoFuncional` varchar(80) DEFAULT NULL,
-  `localizacao` text
+  `descricaoFuncional` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `localizacao` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -150,8 +154,18 @@ CREATE TABLE `departamento` (
 
 CREATE TABLE `estado` (
   `siglaEstado` char(2) NOT NULL,
-  `nome` varchar(30) NOT NULL
+  `nome` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `estado`
+--
+
+INSERT INTO `estado` (`siglaEstado`, `nome`) VALUES
+('AC', 'Acre'),
+('PR', 'Parana'),
+('SC', 'Santa Catarina'),
+('SP', 'São Paulo');
 
 -- --------------------------------------------------------
 
@@ -161,8 +175,8 @@ CREATE TABLE `estado` (
 
 CREATE TABLE `fornecedor` (
   `codFornecedor` int NOT NULL,
-  `nomeFantasia` varchar(80) DEFAULT NULL,
-  `razaoSocial` varchar(80) DEFAULT NULL,
+  `nomeFantasia` varchar(80) NOT NULL,
+  `razaoSocial` varchar(80) NOT NULL,
   `ie` varchar(20) NOT NULL,
   `cgc` varchar(20) NOT NULL,
   `endereco` varchar(60) DEFAULT NULL,
@@ -181,7 +195,6 @@ CREATE TABLE `itemPedido` (
   `codProduto` int NOT NULL,
   `quantidade` decimal(14,2) NOT NULL
 ) ;
-
 
 -- --------------------------------------------------------
 
@@ -204,7 +217,7 @@ CREATE TABLE `itemVenda` (
 
 CREATE TABLE `pedido` (
   `codPedido` int NOT NULL,
-  `dataRealizacao` date DEFAULT (CURRENT_DATE),
+  `dataRealizacao` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `dataEntrega` date DEFAULT NULL,
   `codFornecedor` int DEFAULT NULL,
   `valor` decimal(20,2) DEFAULT NULL
@@ -218,13 +231,13 @@ CREATE TABLE `pedido` (
 
 CREATE TABLE `produto` (
   `codProduto` int NOT NULL,
-  `descricao` varchar(40) NOT NULL,
-  `unidadeMedida` char(2) DEFAULT NULL,
-  `embalagem` varchar(15) DEFAULT 'Fardo',
+  `descrição` varchar(40) NOT NULL,
+  `unidadeMedida` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `embalagem` varchar(15) NOT NULL DEFAULT 'Fardo',
   `codClasse` int DEFAULT NULL,
   `precoVenda` decimal(14,2) DEFAULT NULL,
   `estoqueMinimo` decimal(14,2) DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -252,8 +265,8 @@ CREATE TABLE `venda` (
   `codCliente` int DEFAULT NULL,
   `codVendedor` int DEFAULT NULL,
   `dataVenda` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `enderecoEntrega` varchar(60) DEFAULT NULL,
-  `status` varchar(30) DEFAULT NULL
+  `enderecoEntrega` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `status` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -266,14 +279,12 @@ CREATE TABLE `vendedor` (
   `codVendedor` int NOT NULL,
   `nome` varchar(60) NOT NULL,
   `dataNascimento` date DEFAULT NULL,
-  `endereco` varchar(60) DEFAULT NULL,
-  `cep` char(8) DEFAULT NULL,
-  `telefone` varchar(20) DEFAULT NULL,
-  `codCidade` int DEFAULT '1',
-  `dataContratacao` date DEFAULT (CURRENT_DATE)),
+  `endereco` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `cep` int DEFAULT NULL,
+  `telefone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `codCidade` int DEFAULT NULL,
+  `dataContratacao` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `codDepartamento` int DEFAULT NULL
-  FOREIGN KEY (codDepartamento) REFERENCES departamento (codDepartamento)
-  ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -284,9 +295,9 @@ CREATE TABLE `vendedor` (
 -- Índices de tabela `cidade`
 --
 ALTER TABLE `cidade`
-  ADD PRIMARY KEY (`codCidade`) ,
+  ADD PRIMARY KEY (`codCidade`) USING BTREE,
   ADD UNIQUE KEY `nome` (`nome`),
-  ADD KEY `siglaEstado` (`siglaEstado`);
+  ADD UNIQUE KEY `siglaEstado` (`siglaEstado`);
 
 --
 -- Índices de tabela `classe`
@@ -299,8 +310,7 @@ ALTER TABLE `classe`
 --
 ALTER TABLE `cliente`
   ADD PRIMARY KEY (`codCliente`),
-  ADD KEY `codCidade` (`codCidade`);
-
+  ADD KEY `fk_cli_cid` (`codCidade`);
 
 --
 -- Índices de tabela `clienteFisico`
@@ -314,32 +324,29 @@ ALTER TABLE `clienteFisico`
 --
 ALTER TABLE `clienteJuridico`
   ADD PRIMARY KEY (`codCliente`),
-  ADD UNIQUE KEY `razaoSocial` (`razaoSocial`),
-  ADD UNIQUE KEY `ie` (`ie`),
-  ADD UNIQUE KEY `cgc` (`cgc`),
-  ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`);
+  ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`,`razaoSocial`,`ie`,`cgc`);
 
 --
 -- Índices de tabela `contasPagar`
 --
 ALTER TABLE `contasPagar`
   ADD PRIMARY KEY (`codTitulo`),
-  ADD KEY `codPedido` (`codPedido`);
+  ADD KEY `contasPagar_ibfk_1` (`codPedido`);
 
 --
 -- Índices de tabela `contasReceber`
 --
 ALTER TABLE `contasReceber`
   ADD PRIMARY KEY (`codTitulo`),
-  ADD KEY `codVenda` (`codVenda`);
+  ADD KEY `contasReceber_ibfk_1` (`codVenda`);
 
 --
 -- Índices de tabela `departamento`
 --
 ALTER TABLE `departamento`
   ADD PRIMARY KEY (`codDepartamento`),
-  ADD UNIQUE KEY `nome` (`nome`);
-
+  ADD UNIQUE KEY `nome` (`nome`),
+  ADD UNIQUE KEY `nome_2` (`nome`);
 
 --
 -- Índices de tabela `estado`
@@ -351,13 +358,15 @@ ALTER TABLE `estado`
 --
 -- Índices de tabela `fornecedor`
 --
-AALTER TABLE `fornecedor`
+ALTER TABLE `fornecedor`
   ADD PRIMARY KEY (`codFornecedor`),
-  ADD UNIQUE KEY `ie` (`ie`),
-  ADD UNIQUE KEY `cgc` (`cgc`),
   ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`),
   ADD UNIQUE KEY `razaoSocial` (`razaoSocial`),
-  ADD KEY `codCidade` (`codCidade`);
+  ADD UNIQUE KEY `ie` (`ie`),
+  ADD UNIQUE KEY `cgc` (`cgc`),
+  ADD UNIQUE KEY `nomeFantasia_2` (`nomeFantasia`),
+  ADD UNIQUE KEY `razaoSocial_2` (`razaoSocial`,`ie`,`cgc`),
+  ADD KEY `fornecedor_ibfk_1` (`codCidade`);
 
 --
 -- Índices de tabela `itemPedido`
@@ -369,7 +378,7 @@ ALTER TABLE `itemPedido`
 -- Índices de tabela `itemVenda`
 --
 ALTER TABLE `itemVenda`
-  ADD PRIMARY KEY (`codVenda`,`numeroLote`,`codProduto`),
+  ADD PRIMARY KEY (`codVenda`,`codProduto`,`numeroLote`),
   ADD KEY `fk_itemV_lote` (`codProduto`,`numeroLote`);
 
 --
@@ -377,7 +386,7 @@ ALTER TABLE `itemVenda`
 --
 ALTER TABLE `pedido`
   ADD PRIMARY KEY (`codPedido`),
-  ADD KEY `codFornecedor` (`codFornecedor`);
+  ADD KEY `pedido_ibfk_1` (`codFornecedor`);
 
 --
 -- Índices de tabela `produto`
@@ -397,17 +406,16 @@ ALTER TABLE `produtoLote`
 --
 ALTER TABLE `venda`
   ADD PRIMARY KEY (`codVenda`),
-  ADD KEY `fk_venda_vende` (`codVendedor`),
-  ADD KEY `fk_venda_cliente` (`codCliente`);
+  ADD KEY `fk_venda_cliente` (`codCliente`),
+  ADD KEY `fk_venda_vende` (`codVendedor`);
 
 --
 -- Índices de tabela `vendedor`
 --
 ALTER TABLE `vendedor`
   ADD PRIMARY KEY (`codVendedor`),
-  ADD UNIQUE KEY `nome` (`nome`),
   ADD KEY `codDepartamento` (`codDepartamento`),
-  ADD KEY `codCidade` (`codCidade`);
+  ADD KEY `vendedor_ibfk_2` (`codCidade`);
 
 --
 -- AUTO_INCREMENT para tabelas despejadas
@@ -447,7 +455,7 @@ ALTER TABLE `produto`
 -- AUTO_INCREMENT de tabela `vendedor`
 --
 ALTER TABLE `vendedor`
-  MODIFY `codVendedor` int NOT NULL AUTO_INCREMENT;
+  MODIFY `codVendedor` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restrições para tabelas despejadas
@@ -457,13 +465,13 @@ ALTER TABLE `vendedor`
 -- Restrições para tabelas `cidade`
 --
 ALTER TABLE `cidade`
-  ADD CONSTRAINT `cidade_ibfk_1` FOREIGN KEY (`siglaEstado`) REFERENCES `estado` (`siglaEstado`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `cidade_ibfk_1` FOREIGN KEY (`siglaEstado`) REFERENCES `estado` (`siglaEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `cliente`
 --
 ALTER TABLE `cliente`
-  ADD CONSTRAINT `fk_cli_cid` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_cli_cid` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `clienteFisico`
@@ -475,7 +483,7 @@ ALTER TABLE `clienteFisico`
 -- Restrições para tabelas `clienteJuridico`
 --
 ALTER TABLE `clienteJuridico`
-  ADD CONSTRAINT `fk_clieJ_clie` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_clieJ_clie` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `contasPagar`
@@ -493,7 +501,7 @@ ALTER TABLE `contasReceber`
 -- Restrições para tabelas `fornecedor`
 --
 ALTER TABLE `fornecedor`
-  ADD CONSTRAINT `fornecedor_ibfk_1` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fornecedor_ibfk_1` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `itemPedido`
@@ -505,7 +513,7 @@ ALTER TABLE `itemPedido`
 -- Restrições para tabelas `itemVenda`
 --
 ALTER TABLE `itemVenda`
-  ADD CONSTRAINT `fk_itemV_lote` FOREIGN KEY (`codProduto`,`numeroLote`) REFERENCES `produtoLote` (`codProduto`, `numeroLote`),
+  ADD CONSTRAINT `fk_itemV_lote` FOREIGN KEY (`codProduto`,`numeroLote`) REFERENCES `produtoLote` (`codProduto`, `numeroLote`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `fk_itemV_venda` FOREIGN KEY (`codVenda`) REFERENCES `venda` (`codVenda`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -530,15 +538,15 @@ ALTER TABLE `produtoLote`
 -- Restrições para tabelas `venda`
 --
 ALTER TABLE `venda`
-  ADD CONSTRAINT `fk_venda_cliente` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`),
-  ADD CONSTRAINT `fk_venda_vende` FOREIGN KEY (`codVendedor`) REFERENCES `vendedor` (`codVendedor`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_venda_cliente` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_venda_vende` FOREIGN KEY (`codVendedor`) REFERENCES `vendedor` (`codVendedor`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `vendedor`
 --
 ALTER TABLE `vendedor`
   ADD CONSTRAINT `vendedor_ibfk_1` FOREIGN KEY (`codDepartamento`) REFERENCES `departamento` (`codDepartamento`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `vendedor_ibfk_2` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `vendedor_ibfk_2` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
