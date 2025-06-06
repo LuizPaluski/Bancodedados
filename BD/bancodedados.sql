@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql:3306
--- Tempo de geração: 06/06/2025 às 12:01
+-- Tempo de geração: 06/06/2025 às 14:19
 -- Versão do servidor: 9.0.1
 -- Versão do PHP: 8.2.8
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `bancodedados`
+-- Banco de dados: `banconovo`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `cidade` (
   `codCidade` int NOT NULL,
   `nome` varchar(50) NOT NULL,
-  `siglaEstado` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+  `siglaEstado` char(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -38,12 +38,9 @@ CREATE TABLE `cidade` (
 --
 
 INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
-(1, 'Guarapuava', 'PR');
-INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
-(2, 'Florianopolis', 'SC');
-INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
-(3, 'Curitiba', 'PR');
-INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
+(1, 'Guarapuava', 'PR'),
+(2, 'Florianopolis', 'SC'),
+(3, 'Curitiba', 'PR'),
 (4, 'Apucarana', 'PR');
 
 -- --------------------------------------------------------
@@ -54,10 +51,18 @@ INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
 
 CREATE TABLE `classe` (
   `codClasse` int NOT NULL,
-  `sigla` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `sigla` varchar(12) DEFAULT NULL,
   `nome` varchar(40) NOT NULL,
-  `descricao` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+  `descricao` varchar(80) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `classe`
+--
+
+INSERT INTO `classe` (`codClasse`, `sigla`, `nome`, `descricao`) VALUES
+(1, 'Acab', 'Acabamentos', 'acabamentos hehe'),
+(2, 'Com', 'Comida', 'comidas diferenciadas');
 
 -- --------------------------------------------------------
 
@@ -70,10 +75,19 @@ CREATE TABLE `cliente` (
   `endereco` varchar(60) DEFAULT NULL,
   `codCidade` int NOT NULL,
   `telefone` varchar(20) DEFAULT NULL,
-  `tipo` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `dataCadastro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `cep` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
-) ;
+  `tipo` char(1) DEFAULT NULL,
+  `dataCadastro` date DEFAULT CURRENT_DATE,
+  `cep` char(8) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `cliente`
+--
+
+INSERT INTO `cliente` (`codCliente`, `endereco`, `codCidade`, `telefone`, `tipo`, `dataCadastro`, `cep`) VALUES
+(1, 'Rua Marechal Floriano, 56', 1, '123455', 'F', '1988-01-09', '85012090'),
+(2, 'Rua Marechal Floriano, 57', 1, '123455', 'F', '1988-01-09', '85012090'),
+(3, 'Rua Marechal Floriano, 56', 1, '123455', 'J', '1988-01-09', '85012090');
 
 -- --------------------------------------------------------
 
@@ -86,8 +100,16 @@ CREATE TABLE `clienteFisico` (
   `nome` varchar(50) NOT NULL,
   `dataNascimento` date DEFAULT NULL,
   `cpf` varchar(11) NOT NULL,
-  `rg` varchar(8) NOT NULL
+  `rg` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `clienteFisico`
+--
+
+INSERT INTO `clienteFisico` (`codCliente`, `nome`, `dataNascimento`, `cpf`, `rg`) VALUES
+(1, 'Cleber', '2000-10-10', '12345678900', '12345678'),
+(2, 'Rosa', '2001-10-10', '12345678901', '12345678');
 
 -- --------------------------------------------------------
 
@@ -97,11 +119,18 @@ CREATE TABLE `clienteFisico` (
 
 CREATE TABLE `clienteJuridico` (
   `codCliente` int NOT NULL,
-  `nomeFantasia` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `nomeFantasia` varchar(80) DEFAULT NULL,
   `razaoSocial` varchar(80) NOT NULL,
   `ie` varchar(20) NOT NULL,
   `cgc` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `clienteJuridico`
+--
+
+INSERT INTO `clienteJuridico` (`codCliente`, `nomeFantasia`, `razaoSocial`, `ie`, `cgc`) VALUES
+(3, 'Gelinski', 'Gelinski da silva', 'aaa', 'bbb');
 
 -- --------------------------------------------------------
 
@@ -112,14 +141,21 @@ CREATE TABLE `clienteJuridico` (
 CREATE TABLE `contasPagar` (
   `codTitulo` int NOT NULL,
   `dataVencimento` date NOT NULL,
-  `parcela` int NOT NULL,
-  `codPedido` int NOT NULL,
-  `valor` decimal(20,0) NOT NULL,
-  `dataPagamento` date NOT NULL,
-  `localPagamento` varchar(80) NOT NULL,
-  `juros` decimal(12,2) NOT NULL,
-  `correcaoMonetaria` decimal(12,2) NOT NULL
+  `parcela` int DEFAULT NULL,
+  `codPedido` int DEFAULT NULL,
+  `valor` decimal(20,2) DEFAULT NULL,
+  `dataPagamento` date DEFAULT NULL,
+  `localPagamento` varchar(80) DEFAULT NULL,
+  `juros` decimal(12,2) DEFAULT NULL,
+  `correcaoMonetaria` decimal(12,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `contasPagar`
+--
+
+INSERT INTO `contasPagar` (`codTitulo`, `dataVencimento`, `parcela`, `codPedido`, `valor`, `dataPagamento`, `localPagamento`, `juros`, `correcaoMonetaria`) VALUES
+(1, '2020-10-10', 1, 1, 10.00, '1234-09-29', 'loteria', 40.00, 30.00);
 
 -- --------------------------------------------------------
 
@@ -132,12 +168,20 @@ CREATE TABLE `contasReceber` (
   `dataVencimento` date NOT NULL,
   `codVenda` int NOT NULL,
   `parcela` int DEFAULT NULL,
+  `codPedido` int DEFAULT NULL,
   `valor` decimal(20,2) DEFAULT NULL,
   `dataPagamento` date DEFAULT NULL,
   `localPagamento` varchar(80) DEFAULT NULL,
   `juros` decimal(12,2) DEFAULT NULL,
   `correcaoMonetaria` decimal(12,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `contasReceber`
+--
+
+INSERT INTO `contasReceber` (`codTitulo`, `dataVencimento`, `codVenda`, `parcela`, `codPedido`, `valor`, `dataPagamento`, `localPagamento`, `juros`, `correcaoMonetaria`) VALUES
+(1, '2000-10-10', 1, 1, 1, 20.00, '2000-11-11', 'loteria', 50.00, 50.00);
 
 -- --------------------------------------------------------
 
@@ -148,9 +192,19 @@ CREATE TABLE `contasReceber` (
 CREATE TABLE `departamento` (
   `codDepartamento` int NOT NULL,
   `nome` varchar(40) NOT NULL,
-  `descricaoFuncional` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `localizacao` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+  `descricaoFuncional` varchar(80) DEFAULT NULL,
+  `localizacao` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `departamento`
+--
+
+INSERT INTO `departamento` (`codDepartamento`, `nome`, `descricaoFuncional`, `localizacao`) VALUES
+(1, 'JD', 'Juridico', 'Predio 3C, Sala 2'),
+(2, 'CM', 'Comercial', 'Predio 3C, Sala 3'),
+(3, 'PD', 'Produto', 'Predio 3C, Sala 1'),
+(4, 'MK', 'Marketing', 'Predio 3C, Sala 4');
 
 -- --------------------------------------------------------
 
@@ -160,7 +214,7 @@ CREATE TABLE `departamento` (
 
 CREATE TABLE `estado` (
   `siglaEstado` char(2) NOT NULL,
-  `nome` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+  `nome` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -181,14 +235,22 @@ INSERT INTO `estado` (`siglaEstado`, `nome`) VALUES
 
 CREATE TABLE `fornecedor` (
   `codFornecedor` int NOT NULL,
-  `nomeFantasia` varchar(80) NOT NULL,
-  `razaoSocial` varchar(80) NOT NULL,
+  `nomeFantasia` varchar(80) DEFAULT NULL,
+  `razaoSocial` varchar(80) DEFAULT NULL,
   `ie` varchar(20) NOT NULL,
   `cgc` varchar(20) NOT NULL,
   `endereco` varchar(60) DEFAULT NULL,
   `telefone` varchar(20) DEFAULT NULL,
   `codCidade` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `fornecedor`
+--
+
+INSERT INTO `fornecedor` (`codFornecedor`, `nomeFantasia`, `razaoSocial`, `ie`, `cgc`, `endereco`, `telefone`, `codCidade`) VALUES
+(1, 'Incepa', 'Incepa', 'Incepa', 'Incepa', 'Incepa', '1234675', 1),
+(2, 'forn2', 'forn2', 'forn2', 'forn2', 'forn2', '1234675', 1);
 
 -- --------------------------------------------------------
 
@@ -200,7 +262,15 @@ CREATE TABLE `itemPedido` (
   `codPedido` int NOT NULL,
   `codProduto` int NOT NULL,
   `quantidade` decimal(14,2) NOT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `itemPedido`
+--
+
+INSERT INTO `itemPedido` (`codPedido`, `codProduto`, `quantidade`) VALUES
+(1, 1, 10.00),
+(2, 3, 100.00);
 
 -- --------------------------------------------------------
 
@@ -213,7 +283,15 @@ CREATE TABLE `itemVenda` (
   `codProduto` int NOT NULL,
   `numeroLote` int NOT NULL,
   `quantidade` decimal(14,2) NOT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `itemVenda`
+--
+
+INSERT INTO `itemVenda` (`codVenda`, `codProduto`, `numeroLote`, `quantidade`) VALUES
+(1, 1, 1, 1.00),
+(5, 3, 2, 10.00);
 
 -- --------------------------------------------------------
 
@@ -223,11 +301,20 @@ CREATE TABLE `itemVenda` (
 
 CREATE TABLE `pedido` (
   `codPedido` int NOT NULL,
-  `dataRealizacao` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `dataRealizacao` date DEFAULT CURRENT_DATE,
   `dataEntrega` date DEFAULT NULL,
   `codFornecedor` int DEFAULT NULL,
   `valor` decimal(20,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `pedido`
+--
+
+INSERT INTO `pedido` (`codPedido`, `dataRealizacao`, `dataEntrega`, `codFornecedor`, `valor`) VALUES
+(1, '2014-10-10', '2014-10-10', 1, 100000.00),
+(2, '2014-11-10', '2014-10-10', 2, 9700.00),
+(3, '2013-11-10', NULL, 2, 300.00);
 
 -- --------------------------------------------------------
 
@@ -237,13 +324,22 @@ CREATE TABLE `pedido` (
 
 CREATE TABLE `produto` (
   `codProduto` int NOT NULL,
-  `descrição` varchar(40) NOT NULL,
-  `unidadeMedida` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `embalagem` varchar(15) NOT NULL DEFAULT 'Fardo',
+  `descricao` varchar(40) NOT NULL,
+  `unidadeMedida` char(2) DEFAULT NULL,
+  `embalagem` varchar(15) DEFAULT 'Fardo',
   `codClasse` int DEFAULT NULL,
   `precoVenda` decimal(14,2) DEFAULT NULL,
   `estoqueMinimo` decimal(14,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `produto`
+--
+
+INSERT INTO `produto` (`codProduto`, `descricao`, `unidadeMedida`, `embalagem`, `codClasse`, `precoVenda`, `estoqueMinimo`) VALUES
+(1, 'Produto 1', 'Kg', 'Fardo', 2, 100.34, 123.00),
+(2, 'Produto 2', 'Kg', 'Fardo', 2, 100.34, 123.00),
+(3, 'Cal', 'Kg', 'Fardo', 1, 100.34, 123.00);
 
 -- --------------------------------------------------------
 
@@ -260,6 +356,14 @@ CREATE TABLE `produtoLote` (
   `dataValidade` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Despejando dados para a tabela `produtoLote`
+--
+
+INSERT INTO `produtoLote` (`codProduto`, `numeroLote`, `quantidadeAdquirida`, `quantidadeVendida`, `precoCusto`, `dataValidade`) VALUES
+(1, 1, 100.00, 50.00, 300.00, '2000-10-10'),
+(3, 2, 100.00, 50.00, 300.00, '2000-10-10');
+
 -- --------------------------------------------------------
 
 --
@@ -269,11 +373,22 @@ CREATE TABLE `produtoLote` (
 CREATE TABLE `venda` (
   `codVenda` int NOT NULL,
   `codCliente` int DEFAULT NULL,
-  `codVendedor` int DEFAULT NULL,
-  `dataVenda` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `enderecoEntrega` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `status` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+  `codVendedor` int DEFAULT '100',
+  `dataVenda` date DEFAULT CURRENT_DATE,
+  `enderecoEntrega` varchar(60) DEFAULT NULL,
+  `status` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `venda`
+--
+
+INSERT INTO `venda` (`codVenda`, `codCliente`, `codVendedor`, `dataVenda`, `enderecoEntrega`, `status`) VALUES
+(1, 1, 1, '2004-10-10', 'rua', 'Despachada'),
+(2, 1, 1, '2003-10-10', 'rua', 'Despachada'),
+(3, 1, 1, '2003-10-10', 'rua', 'Cancelada'),
+(4, 3, 2, '2022-10-10', 'casa do cliente', 'Finalizada'),
+(5, 1, 1, '2003-10-10', 'rua', 'Finalizada');
 
 -- --------------------------------------------------------
 
@@ -285,13 +400,22 @@ CREATE TABLE `vendedor` (
   `codVendedor` int NOT NULL,
   `nome` varchar(60) NOT NULL,
   `dataNascimento` date DEFAULT NULL,
-  `endereco` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `cep` int DEFAULT NULL,
-  `telefone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `codCidade` int DEFAULT NULL,
-  `dataContratacao` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `endereco` varchar(60) DEFAULT NULL,
+  `cep` char(8) DEFAULT NULL,
+  `telefone` varchar(20) DEFAULT NULL,
+  `codCidade` int DEFAULT '1',
+  `dataContratacao` date DEFAULT CURRENT_DATE,
   `codDepartamento` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `vendedor`
+--
+
+INSERT INTO `vendedor` (`codVendedor`, `nome`, `dataNascimento`, `endereco`, `cep`, `telefone`, `codCidade`, `dataContratacao`, `codDepartamento`) VALUES
+(1, 'João', '2000-03-14', 'Rua Vicente Machado', '85012250', '1234546', 1, '2017-03-14', 1),
+(2, 'Maria', '2000-03-24', 'Rua Vicente Machado', '85012250', '1234546', 1, '2017-03-04', 2),
+(3, 'Joao de apucarana', '2000-03-24', 'Rua de apucarana', '85012250', '1234546', 4, '2017-03-04', 3);
 
 --
 -- Índices para tabelas despejadas
@@ -301,9 +425,9 @@ CREATE TABLE `vendedor` (
 -- Índices de tabela `cidade`
 --
 ALTER TABLE `cidade`
-  ADD PRIMARY KEY (`codCidade`) USING BTREE,
+  ADD PRIMARY KEY (`codCidade`),
   ADD UNIQUE KEY `nome` (`nome`),
-  ADD UNIQUE KEY `siglaEstado` (`siglaEstado`);
+  ADD KEY `siglaEstado` (`siglaEstado`);
 
 --
 -- Índices de tabela `classe`
@@ -323,36 +447,38 @@ ALTER TABLE `cliente`
 --
 ALTER TABLE `clienteFisico`
   ADD PRIMARY KEY (`codCliente`),
-  ADD UNIQUE KEY `cpf` (`cpf`,`rg`);
+  ADD UNIQUE KEY `cpf` (`cpf`);
 
 --
 -- Índices de tabela `clienteJuridico`
 --
 ALTER TABLE `clienteJuridico`
   ADD PRIMARY KEY (`codCliente`),
-  ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`,`razaoSocial`,`ie`,`cgc`);
+  ADD UNIQUE KEY `razaoSocial` (`razaoSocial`),
+  ADD UNIQUE KEY `ie` (`ie`),
+  ADD UNIQUE KEY `cgc` (`cgc`),
+  ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`);
 
 --
 -- Índices de tabela `contasPagar`
 --
 ALTER TABLE `contasPagar`
   ADD PRIMARY KEY (`codTitulo`),
-  ADD KEY `contasPagar_ibfk_1` (`codPedido`);
+  ADD KEY `codPedido` (`codPedido`);
 
 --
 -- Índices de tabela `contasReceber`
 --
 ALTER TABLE `contasReceber`
   ADD PRIMARY KEY (`codTitulo`),
-  ADD KEY `contasReceber_ibfk_1` (`codVenda`);
+  ADD KEY `codVenda` (`codVenda`);
 
 --
 -- Índices de tabela `departamento`
 --
 ALTER TABLE `departamento`
   ADD PRIMARY KEY (`codDepartamento`),
-  ADD UNIQUE KEY `nome` (`nome`),
-  ADD UNIQUE KEY `nome_2` (`nome`);
+  ADD UNIQUE KEY `nome` (`nome`);
 
 --
 -- Índices de tabela `estado`
@@ -366,13 +492,11 @@ ALTER TABLE `estado`
 --
 ALTER TABLE `fornecedor`
   ADD PRIMARY KEY (`codFornecedor`),
-  ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`),
-  ADD UNIQUE KEY `razaoSocial` (`razaoSocial`),
   ADD UNIQUE KEY `ie` (`ie`),
   ADD UNIQUE KEY `cgc` (`cgc`),
-  ADD UNIQUE KEY `nomeFantasia_2` (`nomeFantasia`),
-  ADD UNIQUE KEY `razaoSocial_2` (`razaoSocial`,`ie`,`cgc`),
-  ADD KEY `fornecedor_ibfk_1` (`codCidade`);
+  ADD UNIQUE KEY `nomeFantasia` (`nomeFantasia`),
+  ADD UNIQUE KEY `razaoSocial` (`razaoSocial`),
+  ADD KEY `codCidade` (`codCidade`);
 
 --
 -- Índices de tabela `itemPedido`
@@ -384,7 +508,7 @@ ALTER TABLE `itemPedido`
 -- Índices de tabela `itemVenda`
 --
 ALTER TABLE `itemVenda`
-  ADD PRIMARY KEY (`codVenda`,`codProduto`,`numeroLote`),
+  ADD PRIMARY KEY (`codVenda`,`numeroLote`,`codProduto`),
   ADD KEY `fk_itemV_lote` (`codProduto`,`numeroLote`);
 
 --
@@ -392,7 +516,7 @@ ALTER TABLE `itemVenda`
 --
 ALTER TABLE `pedido`
   ADD PRIMARY KEY (`codPedido`),
-  ADD KEY `pedido_ibfk_1` (`codFornecedor`);
+  ADD KEY `codFornecedor` (`codFornecedor`);
 
 --
 -- Índices de tabela `produto`
@@ -412,16 +536,17 @@ ALTER TABLE `produtoLote`
 --
 ALTER TABLE `venda`
   ADD PRIMARY KEY (`codVenda`),
-  ADD KEY `fk_venda_cliente` (`codCliente`),
-  ADD KEY `fk_venda_vende` (`codVendedor`);
+  ADD KEY `fk_venda_vende` (`codVendedor`),
+  ADD KEY `fk_venda_cliente` (`codCliente`);
 
 --
 -- Índices de tabela `vendedor`
 --
 ALTER TABLE `vendedor`
   ADD PRIMARY KEY (`codVendedor`),
+  ADD UNIQUE KEY `nome` (`nome`),
   ADD KEY `codDepartamento` (`codDepartamento`),
-  ADD KEY `vendedor_ibfk_2` (`codCidade`);
+  ADD KEY `codCidade` (`codCidade`);
 
 --
 -- AUTO_INCREMENT para tabelas despejadas
@@ -437,31 +562,37 @@ ALTER TABLE `cidade`
 -- AUTO_INCREMENT de tabela `classe`
 --
 ALTER TABLE `classe`
-  MODIFY `codClasse` int NOT NULL AUTO_INCREMENT;
+  MODIFY `codClasse` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de tabela `cliente`
+--
+ALTER TABLE `cliente`
+  MODIFY `codCliente` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `departamento`
 --
 ALTER TABLE `departamento`
-  MODIFY `codDepartamento` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `codDepartamento` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `pedido`
 --
 ALTER TABLE `pedido`
-  MODIFY `codPedido` int NOT NULL AUTO_INCREMENT;
+  MODIFY `codPedido` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `produto`
 --
 ALTER TABLE `produto`
-  MODIFY `codProduto` int NOT NULL AUTO_INCREMENT;
+  MODIFY `codProduto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `vendedor`
 --
 ALTER TABLE `vendedor`
-  MODIFY `codVendedor` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codVendedor` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restrições para tabelas despejadas
@@ -471,13 +602,13 @@ ALTER TABLE `vendedor`
 -- Restrições para tabelas `cidade`
 --
 ALTER TABLE `cidade`
-  ADD CONSTRAINT `cidade_ibfk_1` FOREIGN KEY (`siglaEstado`) REFERENCES `estado` (`siglaEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `cidade_ibfk_1` FOREIGN KEY (`siglaEstado`) REFERENCES `estado` (`siglaEstado`) ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `cliente`
 --
 ALTER TABLE `cliente`
-  ADD CONSTRAINT `fk_cli_cid` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_cli_cid` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `clienteFisico`
@@ -489,7 +620,7 @@ ALTER TABLE `clienteFisico`
 -- Restrições para tabelas `clienteJuridico`
 --
 ALTER TABLE `clienteJuridico`
-  ADD CONSTRAINT `fk_clieJ_clie` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_clieJ_clie` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`) ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `contasPagar`
@@ -507,7 +638,7 @@ ALTER TABLE `contasReceber`
 -- Restrições para tabelas `fornecedor`
 --
 ALTER TABLE `fornecedor`
-  ADD CONSTRAINT `fornecedor_ibfk_1` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fornecedor_ibfk_1` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `itemPedido`
@@ -519,7 +650,7 @@ ALTER TABLE `itemPedido`
 -- Restrições para tabelas `itemVenda`
 --
 ALTER TABLE `itemVenda`
-  ADD CONSTRAINT `fk_itemV_lote` FOREIGN KEY (`codProduto`,`numeroLote`) REFERENCES `produtoLote` (`codProduto`, `numeroLote`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_itemV_lote` FOREIGN KEY (`codProduto`,`numeroLote`) REFERENCES `produtoLote` (`codProduto`, `numeroLote`),
   ADD CONSTRAINT `fk_itemV_venda` FOREIGN KEY (`codVenda`) REFERENCES `venda` (`codVenda`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -544,15 +675,15 @@ ALTER TABLE `produtoLote`
 -- Restrições para tabelas `venda`
 --
 ALTER TABLE `venda`
-  ADD CONSTRAINT `fk_venda_cliente` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `fk_venda_vende` FOREIGN KEY (`codVendedor`) REFERENCES `vendedor` (`codVendedor`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `fk_venda_cliente` FOREIGN KEY (`codCliente`) REFERENCES `cliente` (`codCliente`),
+  ADD CONSTRAINT `fk_venda_vende` FOREIGN KEY (`codVendedor`) REFERENCES `vendedor` (`codVendedor`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `vendedor`
 --
 ALTER TABLE `vendedor`
   ADD CONSTRAINT `vendedor_ibfk_1` FOREIGN KEY (`codDepartamento`) REFERENCES `departamento` (`codDepartamento`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `vendedor_ibfk_2` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `vendedor_ibfk_2` FOREIGN KEY (`codCidade`) REFERENCES `cidade` (`codCidade`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
