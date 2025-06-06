@@ -39,6 +39,12 @@ CREATE TABLE `cidade` (
 
 INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
 (1, 'Guarapuava', 'PR');
+INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
+(2, 'Florianopolis', 'SC');
+INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
+(3, 'Curitiba', 'PR');
+INSERT INTO `cidade` (`codCidade`, `nome`, `siglaEstado`) VALUES
+(4, 'Apucarana', 'PR');
 
 -- --------------------------------------------------------
 
