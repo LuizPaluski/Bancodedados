@@ -76,7 +76,7 @@ CREATE TABLE `cliente` (
   `codCidade` int NOT NULL,
   `telefone` varchar(20) DEFAULT NULL,
   `tipo` char(1) DEFAULT NULL,
-  `dataCadastro` date DEFAULT CURRENT_DATE,
+  `dataCadastro` date DEFAULT (curdate()),
   `cep` char(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -301,7 +301,7 @@ INSERT INTO `itemVenda` (`codVenda`, `codProduto`, `numeroLote`, `quantidade`) V
 
 CREATE TABLE `pedido` (
   `codPedido` int NOT NULL,
-  `dataRealizacao` date DEFAULT CURRENT_DATE,
+  `dataRealizacao` date DEFAULT (curdate()),
   `dataEntrega` date DEFAULT NULL,
   `codFornecedor` int DEFAULT NULL,
   `valor` decimal(20,2) DEFAULT NULL
@@ -374,7 +374,7 @@ CREATE TABLE `venda` (
   `codVenda` int NOT NULL,
   `codCliente` int DEFAULT NULL,
   `codVendedor` int DEFAULT '100',
-  `dataVenda` date DEFAULT CURRENT_DATE,
+  `dataVenda` date DEFAULT (curdate()),
   `enderecoEntrega` varchar(60) DEFAULT NULL,
   `status` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -404,7 +404,7 @@ CREATE TABLE `vendedor` (
   `cep` char(8) DEFAULT NULL,
   `telefone` varchar(20) DEFAULT NULL,
   `codCidade` int DEFAULT '1',
-  `dataContratacao` date DEFAULT CURRENT_DATE,
+  `dataContratacao` date DEFAULT (curdate()),
   `codDepartamento` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
